@@ -1,1 +1,3 @@
-# test_2_main
+#!/bin/bash
+
+# Daniel Lesniewicz, 250996
