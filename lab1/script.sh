@@ -16,42 +16,43 @@ elif [[ $# -eq 0 ]]; then
     TARGET_DIR=${3:-bakap}
 
 else
-    echo "Skrypt należy uruchomić z trzema parametrami lub bez ani jednego parametru."
+    echo "Skrypt należy uruchomić z trzema parametrami lub bez zadnego parametru!"
     exit 1
 fi
- 
- echo "-------------------------------------------------"
 
+echo ""
 # +0.5 – jeżeli TARGET_DIR nie istnieje, to go tworzymy
 if [ ! -d ${TARGET_DIR} ]; then
-    echo "Katalog $TARGET_DIR nie istnieje, zatem go stworzymy!"
+    echo "Katalog $TARGET_DIR NIE istnieje, zatem go stworzymy!"
     mkdir ${TARGET_DIR}
+else
+    echo "Katalog $TARGET_DIR juz istnieje!"
 fi
 
-
+echo ""
 # +1.0 – iterujemy się po zawartości pliku RM_LIST i tylko jeżeli plik 
 # o takiej nazwie występuje w katalogu SOURCE_DIR, to go usuwamy
-    # zakladam ze folder to tez plik - dlatego daem OR'a ;)
-TO_REMOVE_LIST=$(cat -e "${RM_LIST}")
+    #  folder to tez plik - dlatego dalem OR'a ;)
+
+TO_REMOVE_LIST=$(cat "${RM_LIST}")
 for LIST_ELEM in ${TO_REMOVE_LIST}; do
-    
     if [[ -f ${SOURCE_DIR}/${LIST_ELEM} ]] || [[ -d ${SOURCE_DIR}/${LIST_ELEM} ]]; then
-        echo " Usuwam plik: ${LIST_ELEM}"
+        echo "Usuwam plik: ${LIST_ELEM}"
         rm -r ${SOURCE_DIR}/${LIST_ELEM}
     fi
+
 done
 
-
+echo ""
 # +0.5 – jeżeli jakiegoś pliku nie ma na liście, ale jest plikiem, to przenosimy go do TARGET_DIR
 # +0.5 – jeżeli jakiegoś  pliku nie ma na liście, ale jest katalogiem, to kopiujemy go do TARGET_DIR z zawartością
-# czyli: jeśli nie został usunięty
+#   czyli: jeśli nie został usunięty w poprzednim kroku to wykonujemy wlasciwa operacje
 
 for FILE in ${SOURCE_DIR}/*; do
  
     if [[ -f ${FILE} ]]; then
         echo "Przenosze plik: ${FILE} do ${TARGET_DIR}"
         mv ${FILE} ${TARGET_DIR}
-        
     fi
 
     if [[ -d ${FILE} ]]; then
@@ -60,6 +61,7 @@ for FILE in ${SOURCE_DIR}/*; do
     fi    
 done
 
+echo ""
 # +1.0  – jeżeli po zakończeniu operacji są jeszcze jakieś pliki w katalogu SOURCE_DIR to:
 # piszemy np. „jeszcze coś zostało” na konsolę oraz
 # jeżeli co najmniej 2 pliki, to wypisujemy: „zostały co najmniej 2 pliki”
@@ -67,9 +69,7 @@ done
 # jeżeli nie więcej, niż 4, ale co najmniej 2, to też coś piszemy
 # Jeżeli nic nie zostało, to informujemy o tym słowami np. „tu był Kononowicz”
 
-
 COUNT=$(ls ${SOURCE_DIR} | wc -w)
-echo ""
 
 if [[ ${COUNT} -gt 0 ]]; then
     echo "Jeszcze cos zostalo! Ilosc plikow w ${SOURCE_DIR}: ${COUNT}"
@@ -90,16 +90,19 @@ else
     echo "Nic nie zostalo!"
 fi
 
+echo ""
 # +0.5 – wszystkie pliki w katalogu TARGET_DIR muszą mieć odebrane prawa do edycji
 for FILE in ${TARGET_DIR}/*; do
-    # ew. mozna uzyc: chattr +i
-    chmod -w -R ${FILE}
+    chmod -w -R ${FILE} 
+    echo "Odebrano prawo do edycji plikowi ${FILE}!"
+    # odebranie prawa do zapisu (czyli edycji)
+    # ew. mozna uzyc: chattr +i ${FILE}
 done
   
-  
+echo ""
 # +0.5 – po wszystkich spakuj katalog TARGET_DIR i nazwij bakap_DATA.zip, 
 # gdzie DATA to dzień uruchomienia skryptu w formacie RRRR-MM-DD
 
 zip_file_name=bakap_"`date +"%Y-%m-%d"`"
-echo ${zip_file_name}
+echo "Nazwa archiwum: ${zip_file_name}.zip"
 zip -r ${zip_file_name}.zip ${TARGET_DIR}
