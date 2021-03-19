@@ -22,9 +22,9 @@ fi
 
  
 # +0.5 – jeżeli TARGET_DIR nie istnieje, to go tworzymy
-if [ ! -d ${TARGET_DIR} ]; then
+if [ ! -d "${TARGET_DIR}" ]; then
     echo -e "\nKatalog $TARGET_DIR NIE istnieje, zatem go stworzymy!\n"
-    mkdir ${TARGET_DIR}
+    mkdir "${TARGET_DIR}"
 else
     echo -e "\nKatalog $TARGET_DIR juz istnieje!\n"
 fi
@@ -36,9 +36,9 @@ fi
 TO_REMOVE_LIST=$(cat "${RM_LIST}")
 echo "Usuwam plik:"
 for LIST_ELEM in ${TO_REMOVE_LIST}; do
-    if [[ -f ${SOURCE_DIR}/${LIST_ELEM} ]] || [[ -d ${SOURCE_DIR}/${LIST_ELEM} ]]; then
+    if [[ -f "${SOURCE_DIR}/${LIST_ELEM}" ]] || [[ -d "${SOURCE_DIR}/${LIST_ELEM}" ]]; then
         echo -e "\t${LIST_ELEM}"
-        rm -r ${SOURCE_DIR}/${LIST_ELEM}
+        rm -r "${SOURCE_DIR}/${LIST_ELEM}"
     fi
 
 done
@@ -52,12 +52,12 @@ for FILE in ${SOURCE_DIR}/*; do
  
     if [[ -f ${FILE} ]]; then
         echo "Przenosze plik: ${FILE} do ${TARGET_DIR}"
-        mv ${FILE} ${TARGET_DIR}
+        mv "${FILE}" "${TARGET_DIR}"
     fi
 
     if [[ -d ${FILE} ]]; then
         echo "Kopiuje plik - katalog: ${FILE} do ${TARGET_DIR}"
-        cp -r ${FILE} ${TARGET_DIR}
+        cp -r "${FILE}" "${TARGET_DIR}"
     fi    
 done
 
@@ -68,10 +68,10 @@ done
 # jeżeli więcej niż 4, to wypisujemy: „zostało więcej niż 4 pliki” (UWAGA: 4, to też więcej niż 2)
 # jeżeli nie więcej, niż 4, ale co najmniej 2, to też coś piszemy
 # Jeżeli nic nie zostało, to informujemy o tym słowami np. „tu był Kononowicz”
-COUNT=$(ls ${SOURCE_DIR} | wc -w)
+COUNT=$(ls "${SOURCE_DIR}" | wc -w)
 
 if [[ ${COUNT} -gt 0 ]]; then
-    echo -e "\nJeszcze cos zostalo! \nIlosc plikow w ${SOURCE_DIR}: ${COUNT}"
+    echo -e "\nJeszcze cos zostalo! \nIlosc plikow (folderow) w ${SOURCE_DIR}: ${COUNT}"
     
     if [[ ${COUNT} -ge 2 ]]; then
         echo -e "\tZostaly co najmniej 2 pliki!"
@@ -104,4 +104,4 @@ done
 # gdzie DATA to dzień uruchomienia skryptu w formacie RRRR-MM-DD
 zip_file_name=bakap_"`date +"%Y-%m-%d"`"
 echo -e "\nNazwa archiwum:\n\t ${zip_file_name}.zip"
-zip -rq ${zip_file_name}.zip ${TARGET_DIR}
+zip -rq "${zip_file_name}.zip" "${TARGET_DIR}"
