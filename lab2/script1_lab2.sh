@@ -45,7 +45,6 @@ fi
 echo -e "\nZawartosc pliku: "
 
  
-
 for FILE in "${DIRECTORY_1}"/*; do
 
     FILE_NAME_WITH_EXTENSION=${FILE##*/}

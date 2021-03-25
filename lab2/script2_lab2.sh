@@ -37,18 +37,21 @@ fi
 # +0.5 - Napisać skrypt, który w zadanym katalogu (1. parametr) usunie wszystkie uszkodzone dowiązania symboliczne, 
 # a ich nazwy wpisze do pliku (2. parametr), wraz z dzisiejszą datą w formacie ISO 8601.
 
-touch "${FILE1}"
-for FILE in "${DIRECTORY_1}"/*; do
-    FILE_NAME_WITH_EXTENSION=${FILE##*/}
+# ilosc plikow w folderze w ktorym sprawdzamy czy sa uszkodzone dowiazania symboliczne
+COUNT=$(ls "${DIRECTORY_1}" | wc -w)
 
-    # jesli nie istnieje plik to dowiazanie jest uszkodzone
-    if [[ ! -e "${FILE}" ]] ; then
-        echo "${FILE_NAME_WITH_EXTENSION} jest uszkodzony - $(date --iso-8601)" >> ${FILE1}
-        rm "${FILE}"
-    fi
- 
-done
+if [[ ${COUNT} -gt 0 ]]; then
+    touch "${FILE1}"
+    for FILE in "${DIRECTORY_1}"/*; do
+        FILE_NAME_WITH_EXTENSION=${FILE##*/}
 
+        # jesli nie istnieje plik to dowiazanie jest uszkodzone
+        if [[ ! -e "${FILE}" ]]; then
+            echo "${FILE_NAME_WITH_EXTENSION} jest uszkodzony - $(date --iso-8601)" >> ${FILE1}
+            rm "${FILE}"
+        fi
+    done
+fi
 
 
  

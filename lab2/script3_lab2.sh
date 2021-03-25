@@ -42,18 +42,18 @@ for FILE in "${DIRECTORY_1}"/*; do
     FILE_NAME_WITH_EXTENSION=${FILE##*/}
     FILE_EXTENSION=${FILE_NAME_WITH_EXTENSION##*.}
 
- 
     if [[ -f "${FILE}" ]] ; then
         if [[ ${FILE_EXTENSION} == "bak" ]]; then
-            # odebranie prawa do zapisu i czytania czyli edycji dla wszystkich
-            chmod -666 ${FILE}
+            # odebranie prawa do edycji - czyli zapisu dla wlasciciela i innych
+            chmod -222 ${FILE}
         fi
+
         if [[ ${FILE_EXTENSION} == "txt" ]]; then
             # - plikowi z rozszerzeniem .txt będą czytać tylko właściciele, edytować grupa właścicieli, 
             #   wykonywać inni. Brak innych uprawnień
-            #       czyli rozumiem to tak, ze grupa moze tylko edytowac czyli zapisywac i czytac
+            #       czyli rozumiem to tak, ze grupa moze tylko edytowac (zapisywac)
             chmod -777 ${FILE}
-            chmod +466 ${FILE}
+            chmod +421 ${FILE}
         fi
 
         if [[ ${FILE_EXTENSION} == "exe" ]]; then
@@ -63,9 +63,13 @@ for FILE in "${DIRECTORY_1}"/*; do
 
     if [[ -d "${FILE}" ]]; then
         if [[ ${FILE_EXTENSION} == "bak" ]]; then
-            # odebranie prawa do wchodzenia do srodka wlascicielowi, a pozwolenie innym
-            chmod -400  ${FILE}
-            chmod +044  ${FILE}
+            # odebranie prawa do wchodzenia do srodka wlascicielowi i grupie, a pozwolenie innym
+            chmod -440  ${FILE}
+            chmod +004  ${FILE}
+        fi
+
+        if [[ ${FILE_EXTENSION} == "tmp" ]]; then
+            chmod +222  ${FILE}
         fi
     fi
 
