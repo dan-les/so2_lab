@@ -23,6 +23,7 @@
 ```bash
 source .env
 ```
+![console view](./img_zad4.PNG)
 
 
  
