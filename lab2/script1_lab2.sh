@@ -32,8 +32,8 @@ if [[ ! -d "${DIRECTORY_1}" ]] || [[ ! -d "${DIRECTORY_2}" ]]; then
     exit ${NO_DIRECTORY_ERROR}
 fi
 
-#########################################################################
-
+ 
+####################################################################################
 # 3.0: Napisać skrypt, który przyjmuje 2 parametry – 2 ścieżki do katalogów.
 # Z zadanego katalogu nr 1 wypisać wszystkie pliki po kolei, wraz z informacją:
 # - czy jest to katalog
@@ -42,8 +42,9 @@ fi
     # Następnie (lub równolegle) utworzyć w katalogu nr 2 dowiązania symboliczne 
     # do każdego pliku regularnego i katalogu z katalogu nr 1, dodając "_ln" przed 
     # rozszerzeniem, np. magic_file.txt -> magic_file_ln.txt
-echo -e "\nZawartosc pliku: "
+####################################################################################
 
+echo -e "\nZawartosc pliku: "
  
 for FILE in "${DIRECTORY_1}"/*; do
 
@@ -54,7 +55,7 @@ for FILE in "${DIRECTORY_1}"/*; do
     if [[ -d "${FILE}" ]]; then
         echo -e "\t${FILE} - katalog"
 
-        if [[ ! "${DIRECTORY_1}" = /* ]];then # w zaleznosci od rodzaju podanej sciezki (wzgledna/bezwzgledna)
+        if [[ ! "${DIRECTORY_1}" = /* ]];then  # ***
             ln -s "${PWD}/${FILE}" "${DIRECTORY_2}/${FILE_NAME}_ln"
         else
             ln -s "${FILE}" "${DIRECTORY_2}/${FILE_NAME}_ln"
@@ -66,7 +67,7 @@ for FILE in "${DIRECTORY_1}"/*; do
     elif [[ -f "${FILE}" ]]; then
         echo -e "\t${FILE} - plik regulary"
 
-        if [[ ! "${DIRECTORY_1}" = /* ]];then # w zaleznosci od rodzaju podanej sciezki (wzgledna/bezwzgledna)
+        if [[ ! "${DIRECTORY_1}" = /* ]];then  # ***
             ln -s "${PWD}/${FILE}" "${DIRECTORY_2}/${FILE_NAME}_ln.${FILE_EXTENSION}"
         else
             ln -s "${FILE}" "${DIRECTORY_2}/${FILE_NAME}_ln.${FILE_EXTENSION}"
@@ -75,3 +76,7 @@ for FILE in "${DIRECTORY_1}"/*; do
 
 done
 
+# *** <-- aby zadzialala komenda 'ln', musimy znajdowac sie w folderze w ktorym 
+#         jest plik do ktorego tworzymy link lub podac sciezke bezwzgledna
+#         (aby nie uzywac cd, sprawdzam jakiego rodzaju jest sciezka i w zaleznosci 
+#          od tego tworze odpowiednio dowiazanie)

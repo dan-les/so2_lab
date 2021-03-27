@@ -25,8 +25,7 @@ if [[ ! -d "${DIRECTORY_1}" ]]; then
     exit ${NO_DIRECTORY_ERROR}
 fi
 
-#########################################################################
-
+########################################################################################################
 # +1.0 - Napisać skrypt, który w zadanym katalogu (jako parametr) każdemu:
 # - plikowi regularnemu z rozszerzeniem .bak odbierze uprawnienia do edytowania dla właściciela i innych
 # - katalogowi z rozszerzeniem .bak (bo można!) pozwoli wchodzić do środka tylko innym
@@ -36,7 +35,7 @@ fi
 # - pliki regularne z rozszerzeniem .exe wykonywać będą mogli wszyscy, ale zawsze wykonają się 
 #   z uprawnieniami właściciela (można przetestować na 
 #   skompilowanym https://github.com/szandala/SO2/blob/master/lab2/suid.c)
-
+########################################################################################################
 
 for FILE in "${DIRECTORY_1}"/*; do
     FILE_NAME_WITH_EXTENSION=${FILE##*/}
@@ -44,32 +43,29 @@ for FILE in "${DIRECTORY_1}"/*; do
 
     if [[ -f "${FILE}" ]] ; then
         if [[ ${FILE_EXTENSION} == "bak" ]]; then
-            # odebranie prawa do edycji - czyli zapisu dla wlasciciela i innych
-            chmod -222 ${FILE}
+                # odebranie prawa do edycji - czyli zapisu dla wlasciciela i innych
+            chmod -202 ${FILE}
         fi
 
         if [[ ${FILE_EXTENSION} == "txt" ]]; then
-            # - plikowi z rozszerzeniem .txt będą czytać tylko właściciele, edytować grupa właścicieli, 
-            #   wykonywać inni. Brak innych uprawnień
-            #       czyli rozumiem to tak, ze grupa moze tylko edytowac (zapisywac)
+                # czyli rozumiem to tak, ze grupa moze tylko edytowac (zapisywac)
             chmod -777 ${FILE}
             chmod +421 ${FILE}
         fi
 
         if [[ ${FILE_EXTENSION} == "exe" ]]; then
-            chmod +111 ${FILE}
+            chmod +4111 ${FILE}
         fi
     fi
 
     if [[ -d "${FILE}" ]]; then
         if [[ ${FILE_EXTENSION} == "bak" ]]; then
-            # odebranie prawa do wchodzenia do srodka wlascicielowi i grupie, a pozwolenie innym
             chmod -440  ${FILE}
             chmod +004  ${FILE}
         fi
 
         if [[ ${FILE_EXTENSION} == "tmp" ]]; then
-            chmod +222  ${FILE}
+            chmod +666  ${FILE}
         fi
     fi
 

@@ -32,10 +32,10 @@ if [[ ! -d "${DIRECTORY_1}" ]]; then
     exit ${NO_DIRECTORY_ERROR}
 fi
 
-#########################################################################
-
-# +0.5 - Napisać skrypt, który w zadanym katalogu (1. parametr) usunie wszystkie uszkodzone dowiązania symboliczne, 
-# a ich nazwy wpisze do pliku (2. parametr), wraz z dzisiejszą datą w formacie ISO 8601.
+########################################################################################################
+# +0.5 - Napisać skrypt, który w zadanym katalogu (1. parametr) usunie wszystkie uszkodzone dowiązania 
+# symboliczne, a ich nazwy wpisze do pliku (2. parametr), wraz z dzisiejszą datą w formacie ISO 8601.
+########################################################################################################
 
 # ilosc plikow w folderze w ktorym sprawdzamy czy sa uszkodzone dowiazania symboliczne
 COUNT=$(ls "${DIRECTORY_1}" | wc -w)
