@@ -49,29 +49,26 @@ for FILE in "${DIRECTORY_1}"/*; do
 
         if [[ ${FILE_EXTENSION} == "txt" ]]; then
                 # czyli rozumiem to tak, ze grupa moze tylko edytowac (zapisywac)
-            chmod -777 ${FILE}
-            chmod +421 ${FILE}
+            chmod 421 "${FILE}"
         fi
 
         if [[ ${FILE_EXTENSION} == "exe" ]]; then
-            chmod +4111 ${FILE}
+            chmod +4111 "${FILE}"
         fi
     fi
 
     if [[ -d "${FILE}" ]]; then
         if [[ ${FILE_EXTENSION} == "bak" ]]; then
-            chmod -440  ${FILE}
-            chmod +004  ${FILE}
+            chmod -110 "${FILE}"
+            chmod +001 "${FILE}"
         fi
 
         if [[ ${FILE_EXTENSION} == "tmp" ]]; then
-            chmod +666  ${FILE}
+            chmod +200 "${FILE}/*"
+            chmod -022 "${FILE}/*"
         fi
     fi
 
-    
- 
- 
 done
 
 
