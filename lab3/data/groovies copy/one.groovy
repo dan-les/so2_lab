@@ -1,5 +1,4 @@
 class MemoDsl {
-    String marker = "/!@$%/"
 
     String toText
     String fromText
@@ -7,16 +6,15 @@ class MemoDsl {
     def sections = []
 
     /**'
+     * Help docs:
      * This method accepts a closure which is essentially the DSL. Delegate the 
      * closure methods to
         $HEADER
      * the DSL class so the calls can be processed
-    String marker = "/!@$%/"
      */
     def static make(closure) {
         MemoDsl memoDsl = new MemoDsl()
         // any method called in closure will be delegated to the memoDsl class
-    String marker = "/!@$%/"
         closure.delegate = memoDsl
         closure()
     }
