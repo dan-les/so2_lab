@@ -17,6 +17,12 @@
 ```bash
 ./zad3.sh
 ```
+
+* zad4 - dla chetnych: 
+[ `zad4.sh`](./zad4.sh)
+```bash
+./zad4.sh
+```
  
 
  

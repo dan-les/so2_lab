@@ -15,6 +15,7 @@ done
 echo "----- 2 -----"
 for FILE in "data/groovies"/*; do
      FILE_CONTENT=$(cat ${FILE} | sed -i 's|.*class.*|&\n    String marker = "/!@$%/"|' ${FILE})
+     # *POPRAWIC* !!!!!!!!!!!! nwm czy taki string ma byc????
      echo "Przetorzony plik: ${FILE}"
 done
 
