@@ -5,9 +5,9 @@
 echo "----- 1 -----"
 for FILE in "data/groovies"/*; do
      cat ${FILE} | sed -i 's|\$HEADER\$|/temat/|g' ${FILE}
-     # -i <-- w tym samem pliku
+     # -i <-- nadpisz w tym samym pliku (edit files in place)
      #  g <-- nie tylko pierwsze wystpienie
-     echo "Przetorzony plik: ${FILE}"
+     echo "Przetworzony plik: ${FILE}"
 done
 
 
@@ -15,7 +15,7 @@ done
 echo "----- 2 -----"
 for FILE in "data/groovies"/*; do
      cat ${FILE} | sed -ri "s|.*class.*|&\n    String marker = '\/!@\$%/'|" ${FILE}
-     echo "Przetorzony plik: ${FILE}"
+     echo "Przetworzony plik: ${FILE}"
 done
 
 
@@ -24,5 +24,5 @@ echo "----- 3 -----"
 for FILE in "data/groovies"/*; do
     cat ${FILE} | sed -i '/Help docs:/d' ${FILE}
     # d <-- delete line
-    echo "Przetorzony plik: ${FILE}"
+    echo "Przetworzony plik: ${FILE}"
 done
