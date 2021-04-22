@@ -5,18 +5,19 @@ function print_help () {
     echo -e "-d DIRECTORY\n\tDirectory with files describing movies"
     echo -e "-a ACTOR\n\tSearch movies that this ACTOR played in"
     echo -e "-t QUERY\n\tSearch movies with given QUERY in title"
+    echo -e "-y YEAR\n\tSearch movies made after the YEAR"
     echo -e "-f FILENAME\n\tSaves results to file (default: results.txt)"
     echo -e "-x\n\tPrints results in XML format"
     echo -e "-h\n\tPrints this help message"
 }
 
 function print_error () {
-    echo -e "\e[31m\033[1m${@}\033[0m" >&2
+    echo -e "\e[31m\033[1m\033[0m" >&2  #NAPRAWIC!!!
 }
 
 function get_movies_list () {
     local -r MOVIES_DIR=${1}
-    local -r MOVIES_LIST=$(cd "${MOVIES_DIR}" && realpath *)
+    local -r MOVIES_LIST=$(cd "${MOVIES_DIR}" && realpath ./*)
     echo "${MOVIES_LIST}"
 }
 
@@ -27,8 +28,8 @@ function query_title () {
 
     local RESULTS_LIST=()
     for MOVIE_FILE in ${MOVIES_LIST}; do
-        if grep "| Title" ${MOVIE_FILE} | grep -q "${QUERY}"; then
-            RESULTS_LIST+=( ${MOVIE_FILE} )
+        if grep "| Title" "${MOVIE_FILE}" | grep -q "${QUERY}"; then
+            RESULTS_LIST+=( "${MOVIE_FILE}" )
         fi
     done
     echo "${RESULTS_LIST[@]:-}"
@@ -41,18 +42,40 @@ function query_actor () {
 
     local RESULTS_LIST=()
     for MOVIE_FILE in ${MOVIES_LIST}; do
-        if grep "| Actors" ${MOVIE_FILE} | grep -q "${QUERY}"; then
-            RESULTS_LIST+=( ${MOVIE_FILE} )
+        if grep "| Actors" "${MOVIE_FILE}" | grep -q "${QUERY}"; then
+            RESULTS_LIST+=( "${MOVIE_FILE}" )
         fi
     done
     echo "${RESULTS_LIST[@]:-}"
 }
 
+
+function query_year () {
+    # Returns list of movies from ${1} with ${2} in year slot
+    local -r MOVIES_LIST=${1}
+    local -r QUERY=${2}
+    local CURRENT_YEAR=$(date +'%Y')
+    local COUNTER=${QUERY}
+
+    local RESULTS_LIST=()
+    for MOVIE_FILE in ${MOVIES_LIST}; do
+        while [ "${COUNTER}" -le "${CURRENT_YEAR}" ] ; do
+            COUNTER=$((COUNTER + 1 ))
+            if grep "| Year" "${MOVIE_FILE}" | grep -q "${COUNTER}"; then
+                RESULTS_LIST+=( "${MOVIE_FILE}" )
+            fi
+        done
+        COUNTER=${QUERY}
+    done
+    echo "${RESULTS_LIST[@]:-}"
+}
+
+
 function print_xml_format () {
     local -r FILENAME=${1}
+    local TEMP
 
-    local TEMP=$(cat "${FILENAME}")
-
+    TEMP=$(cat "${FILENAME}")
     # TODO: replace first line of equals signs
 
     # TODO: change 'Author:' into <Author>
@@ -68,7 +91,7 @@ function print_xml_format () {
 }
 
 function print_movies () {
-    local -r MOVIES_LIST=$(echo "${1}")
+    local -r MOVIES_LIST=${1}
     local -r OUTPUT_FORMAT=${2}
 
     for MOVIE_FILE in ${MOVIES_LIST}; do
@@ -80,9 +103,11 @@ function print_movies () {
     done
 }
 
-ANY_ERRORS=false
 
-while getopts ":hd:t:a:f:x" OPT; do
+
+#ANY_ERRORS=false   #POPRAWIC
+FILE_4_SAVING_RESULTS=result
+while getopts ":hd:t:y:a:f:x" OPT; do
   case ${OPT} in
     h)
         print_help
@@ -95,19 +120,25 @@ while getopts ":hd:t:a:f:x" OPT; do
         SEARCHING_TITLE=true
         QUERY_TITLE=${OPTARG}
         ;;
+
+    y)
+        SEARCHING_YEAR=true
+        QUERY_YEAR=${OPTARG}
+        ;;
     f)
+        SAVE_FILE=true
         FILE_4_SAVING_RESULTS=${OPTARG}
         ;;
     a)
         SEARCHING_ACTOR=true
-        QUERY_ACTOR=$( echo "${OPTARG}")
+        QUERY_ACTOR=${OPTARG}
         ;;
     x)
         OUTPUT_FORMAT="xml"
         ;;
     \?)
         print_error "ERROR: Invalid option: -${OPTARG}"
-        ANY_ERRORS=true
+        # ANY_ERRORS=true   #POPRAWIC
         exit 1
         ;;
   esac
@@ -123,14 +154,58 @@ if ${SEARCHING_ACTOR:-false}; then
     MOVIES_LIST=$(query_actor "${MOVIES_LIST}" "${QUERY_ACTOR}")
 fi
 
-if [[ "${#MOVIES_LIST}" < 1 ]]; then
+ 
+GIVEN_YEAR=${QUERY_YEAR}
+if ${SEARCHING_YEAR:-false}; then
+    MOVIES_LIST=$(query_year "${MOVIES_LIST}" "${GIVEN_YEAR}")
+fi
+
+
+
+if [[ "${#MOVIES_LIST}" -lt 1 ]]; then
     echo "Found 0 movies :-("
     exit 0
 fi
 
-if [[ "${FILE_4_SAVING_RESULTS:-}" == "" ]]; then
-    print_movies "${MOVIES_LIST}" "${OUTPUT_FORMAT:-raw}"
-else
-    # TODO: add XML option
-    print_movies "${MOVIES_LIST}" "raw" | tee "${FILE_4_SAVING_RESULTS}"
+if ${SAVE_FILE:-false}; then
+
+    echo "${FILE_4_SAVING_RESULTS}"
+     
+    FILE=results.txt
+    if [[ ${FILE_4_SAVING_RESULTS: -4} == ".txt" ]]; then
+        FILE=${FILE_4_SAVING_RESULTS}
+
+    elif [[ ! ${FILE_4_SAVING_RESULTS: -4} == ".txt" ]]; then
+        FILE="${FILE_4_SAVING_RESULTS}.txt"
+    fi
+
+    echo "${FILE}"
+
+    # FILE_EXTENSION=${FILE_NAME_WITH_EXTENSION##*.}
+    # if [[ ! -n ${FILE_4_SAVING_RESULTS} ]]; then
+    # FILE="results.txt"
+
+    # elif [[ ${FILE_4_SAVING_RESULTS} == "" ]]; then
+    # FILE="${FILE_NAME}.txt"
+
+    # else
+    # FILE="${FILE_4_SAVING_RESULTS}"
+    # fi
+ 
+
+    #echo ${FILE_4_SAVING_RESULTS2}
+    print_movies "${MOVIES_LIST}" "raw" > "${FILE}"
 fi
+
+
+# if [[ "${FILE_4_SAVING_RESULTS:-""}" == "" ]]; then
+#         print_movies "${MOVIES_LIST}" "${OUTPUT_FORMAT:-raw}"
+#     else
+#         # TODO: add XML option
+#         print_movies "${MOVIES_LIST}" "raw" | tee "${FILE_4_SAVING_RESULTS}"
+        
+# fi
+
+print_movies "${MOVIES_LIST}" "${OUTPUT_FORMAT:-raw}"
+
+
