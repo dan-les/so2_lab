@@ -1,6 +1,6 @@
 ### Lab 4
 
-* Dzialajcy skrypt: 
+* Działający skrypt: 
 [ `movies.sh`](./movies.sh)
 ```bash
 >> ./movies.sh [params]
