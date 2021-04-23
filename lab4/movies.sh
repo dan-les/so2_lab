@@ -1,4 +1,9 @@
 #!/bin/bash -eu
+# Daniel Lesniewicz, 250996
+
+# =====================================================================
+#   Wykonane zostaly wszystkie zadania (shellcheck nie zwraca bledow)
+# =====================================================================
 
 function print_help () {
     echo "This script allows to search over movies database"
@@ -7,19 +12,21 @@ function print_help () {
     echo -e "-t QUERY\n\tSearch movies with given QUERY in title"
     echo -e "-y YEAR\n\tSearch movies made after the YEAR"
     echo -e "-R QUERY\n\tSearch movies that contains QUERY in plot"
-    echo -e "-i \n\tIgnore letter size in searching by plot"
+    echo -e "-i \n\tIgnore letter size in searching by plot (param: -R)"
     echo -e "-f FILENAME\n\tSaves results to file (default: results.txt)"
     echo -e "-x\n\tPrints results in XML format"
     echo -e "-h\n\tPrints this help message"
 }
 
 function print_error () {
-    echo -e "\e[31m\033[1m\033[0m" >&2  #NAPRAWIC!!!
+    # Displays error as red font
+    echo -e "\e[31m\033[1m${1}\033[0m" >&2
 }
 
 function get_movies_list () {
     local -r MOVIES_DIR=${1}
     local -r MOVIES_LIST=$(cd "${MOVIES_DIR}" && realpath ./*)
+
     echo "${MOVIES_LIST}"
 }
 
@@ -27,8 +34,8 @@ function query_title () {
     # Returns list of movies from ${1} with ${2} in title slot
     local -r MOVIES_LIST=${1}
     local -r QUERY=${2}
-
     local RESULTS_LIST=()
+
     for MOVIE_FILE in ${MOVIES_LIST}; do
         if grep "| Title" "${MOVIE_FILE}" | grep -q "${QUERY}"; then
             RESULTS_LIST+=( "${MOVIE_FILE}" )
@@ -41,8 +48,8 @@ function query_actor () {
     # Returns list of movies from ${1} with ${2} in actor slot
     local -r MOVIES_LIST=${1}
     local -r QUERY=${2}
-
     local RESULTS_LIST=()
+
     for MOVIE_FILE in ${MOVIES_LIST}; do
         if grep "| Actors" "${MOVIE_FILE}" | grep -q "${QUERY}"; then
             RESULTS_LIST+=( "${MOVIE_FILE}" )
@@ -51,13 +58,11 @@ function query_actor () {
     echo "${RESULTS_LIST[@]:-}"
 }
 
-
 function query_plot() {
     # Returns list of movies from ${1} with ${2} in plot slot
     local -r MOVIES_LIST=${1}
     local -r QUERY=${2}
     local -r IGNORE_SIZE=${3}
-
     local RESULTS_LIST=()
 
     if ${IGNORE_SIZE}; then  
@@ -73,21 +78,18 @@ function query_plot() {
             fi
         done
     fi
-
-    
     echo "${RESULTS_LIST[@]:-}"
 }
 
-
 function query_year () {
-    # Returns list of movies from ${1} with ${2} in year slot
+    # Returns list of movies from ${1} which are more recent than the YEAR given in ${2}
     local -r MOVIES_LIST=${1}
     local -r QUERY=${2}
     local CURRENT_YEAR
-    CURRENT_YEAR=$(date +'%Y')
     local COUNTER=${QUERY}
-
     local RESULTS_LIST=()
+    CURRENT_YEAR=$(date +'%Y')
+
     for MOVIE_FILE in ${MOVIES_LIST}; do
         while [ "${COUNTER}" -le "${CURRENT_YEAR}" ] ; do
             COUNTER=$((COUNTER + 1 ))
@@ -100,22 +102,19 @@ function query_year () {
     echo "${RESULTS_LIST[@]:-}"
 }
 
-
 function print_xml_format () {
     local -r FILENAME=${1}
     local TEMP
-
     TEMP=$(cat "${FILENAME}")
-    # TODO: replace first line of equals signs
 
-    # TODO: change 'Author:' into <Author>
-    # TODO: change others too
-
+    # append tag before each line
+    TEMP=$(echo "${TEMP}" | sed -r 's/([A-Za-z]+)/\0 <\/\1>/' | sed -r 's/: //g' | sed -r 's/\|.* <\//\t</g')
     # append tag after each line
     TEMP=$(echo "${TEMP}" | sed -r 's/([A-Za-z]+).*/\0<\/\1>/')
-
     # replace the last line with </movie>
     TEMP=$(echo "${TEMP}" | sed '$s/===*/<\/movie>/')
+    # TODO: replace first line of equals signs (in fact the second line) with <movie>
+    TEMP=$(echo "${TEMP}" | sed '2s/===*/<movie>/')
 
     echo "${TEMP}"
 }
@@ -135,8 +134,6 @@ function print_movies () {
 
 IGNORE_LETTER_SIZE=false
 
-#ANY_ERRORS=false   #POPRAWIC
-FILE_4_SAVING_RESULTS=result
 while getopts ":hd:t:ya:R:if::x" OPT; do
   case ${OPT} in
     h)
@@ -176,28 +173,24 @@ while getopts ":hd:t:ya:R:if::x" OPT; do
         ;;
     \?)
         print_error "ERROR: Invalid option: -${OPTARG}"
-        # ANY_ERRORS=true   #POPRAWIC
         exit 1
         ;;
   esac
 done
 
-
 if ${IS_D_USES:-false}; then
-    echo "You use -d option"
+    echo  "You use -d options"
     if [[ -d ${MOVIES_DIR} ]]; then
-        echo "This is a directory"
+        echo  "This is a directory"
     else
         echo "This is NOT a directory"
     fi
-
 else 
-    echo "You have to use -d option"
+    echo  "You have to use -d option"
     exit 1
 fi
-
+echo "----------------------------------------"
  
-
 
 MOVIES_LIST=$(get_movies_list "${MOVIES_DIR}")
 
@@ -208,7 +201,6 @@ fi
 if ${SEARCHING_ACTOR:-false}; then
     MOVIES_LIST=$(query_actor "${MOVIES_LIST}" "${QUERY_ACTOR}")
 fi
-
  
 if ${SEARCHING_YEAR:-false}; then
     GIVEN_YEAR=${QUERY_YEAR}
@@ -217,61 +209,28 @@ fi
 
 if ${SEARCHING_PLOT:-false}; then
     MOVIES_LIST=$(query_plot "${MOVIES_LIST}" "${QUERY_PLOT}" "${IGNORE_LETTER_SIZE}")
-    echo "${IGNORE_LETTER_SIZE}"
 fi
 
 if [[ "${#MOVIES_LIST}" -lt 1 ]]; then
-    echo "Found 0 movies :-("
+    echo -e "Found 0 movies :-("
     exit 0
 fi
 
-
-
-
-
 if ${SAVE_FILE:-false}; then
-
-    echo "${FILE_4_SAVING_RESULTS}"
-     
-    FILE=results.txt
     if [[ ${FILE_4_SAVING_RESULTS: -4} == ".txt" ]]; then
         FILE=${FILE_4_SAVING_RESULTS}
 
     elif [[ ! ${FILE_4_SAVING_RESULTS: -4} == ".txt" ]]; then
         FILE="${FILE_4_SAVING_RESULTS}.txt"
     fi
+fi
 
-    echo "${FILE}"
-
-    # FILE_EXTENSION=${FILE_NAME_WITH_EXTENSION##*.}
-    # if [[ ! -n ${FILE_4_SAVING_RESULTS} ]]; then
-    # FILE="results.txt"
-
-    # elif [[ ${FILE_4_SAVING_RESULTS} == "" ]]; then
-    # FILE="${FILE_NAME}.txt"
-
-    # else
-    # FILE="${FILE_4_SAVING_RESULTS}"
-    # fi
- 
-
-    #echo ${FILE_4_SAVING_RESULTS2}
-    print_movies "${MOVIES_LIST}" "raw" > "${FILE}"
+if [[ "${FILE:-""}" == "" ]]; then
+    print_movies "${MOVIES_LIST}" "${OUTPUT_FORMAT:-raw}"
+else
+    print_movies "${MOVIES_LIST}" "${OUTPUT_FORMAT:-raw}" | tee "${FILE}"   
 fi
 
 
-
-
-
-
-# if [[ "${FILE_4_SAVING_RESULTS:-""}" == "" ]]; then
-#         print_movies "${MOVIES_LIST}" "${OUTPUT_FORMAT:-raw}"
-#     else
-#         # TODO: add XML option
-#         print_movies "${MOVIES_LIST}" "raw" | tee "${FILE_4_SAVING_RESULTS}"
-        
-# fi
-
-print_movies "${MOVIES_LIST}" "${OUTPUT_FORMAT:-raw}"
 
 
