@@ -1,0 +1,26 @@
+
+<movie>
+	<Title>AvengersAge of Ultron</Title>
+	<Year>2015</Year>
+	<Runtime>141 min</Runtime>
+	<IMDB>7.4/10</IMDB>
+	<Tomato>75%</Tomato>
+	<Rated>PG-13</Rated>
+	<Genre>Action, Adventure, Sci-Fi</Genre>
+	<Director>Joss Whedon</Director>
+	<Actors>Robert Downey Jr., Chris Hemsworth, Mark Ruffalo, Chris Evans</Actors>
+	<Plot>When Tony Stark and Bruce Banner try to jump-start a dormant peacekeeping program called Ultron, things go horribly wrong and it's up to Earth's mightiest heroes to stop the villainous Ultron from enacting his terrible plan.</Plot>
+</movie>
+
+<movie>
+	<Title>The Avengers</Title>
+	<Year>2012</Year>
+	<Runtime>143 min</Runtime>
+	<IMDB>8.1/10</IMDB>
+	<Tomato>92%</Tomato>
+	<Rated>PG-13</Rated>
+	<Genre>Action, Adventure, Sci-Fi</Genre>
+	<Director>Joss Whedon</Director>
+	<Actors>Robert Downey Jr., Chris Evans, Mark Ruffalo, Chris Hemsworth</Actors>
+	<Plot>Earth's mightiest heroes must come together and learn to fight as a team if they are going to stop the mischievous Loki and his alien army from enslaving humanity.</Plot>
+</movie>

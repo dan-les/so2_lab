@@ -113,7 +113,7 @@ function print_xml_format () {
     TEMP=$(echo "${TEMP}" | sed -r 's/([A-Za-z]+).*/\0<\/\1>/')
     # replace the last line with </movie>
     TEMP=$(echo "${TEMP}" | sed '$s/===*/<\/movie>/')
-    # TODO: replace first line of equals signs (in fact the second line) with <movie>
+    # TODO: replace first line of equals signs (in fact the second line in file) with <movie>
     TEMP=$(echo "${TEMP}" | sed '2s/===*/<movie>/')
 
     echo "${TEMP}"
@@ -183,10 +183,12 @@ if ${IS_D_USES:-false}; then
     if [[ -d ${MOVIES_DIR} ]]; then
         echo  "This is a directory"
     else
-        echo "This is NOT a directory"
+        echo "This is NOT a proper directory"
+        exit 1
     fi
 else 
-    echo  "You have to use -d option"
+    echo  -e "\nYou have to use -d option\n"
+    print_help
     exit 1
 fi
 echo "----------------------------------------"
@@ -230,7 +232,3 @@ if [[ "${FILE:-""}" == "" ]]; then
 else
     print_movies "${MOVIES_LIST}" "${OUTPUT_FORMAT:-raw}" | tee "${FILE}"   
 fi
-
-
-
-
