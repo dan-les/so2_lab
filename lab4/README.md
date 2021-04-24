@@ -1,6 +1,6 @@
 ### Lab 4
 
-* Działający skrypt: 
+* Działający (poprawiony) skrypt: 
 [ `movies.sh`](./movies.sh)
 ```bash
 >> ./movies.sh [params]
@@ -8,7 +8,9 @@
 Parametry:
 ```bash
 >> ./movies.sh -h
+```
 
+```text
 -d DIRECTORY
         Directory with files describing movies
 -a ACTOR
