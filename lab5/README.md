@@ -6,4 +6,5 @@
 ```bash
 >> python3 main.py
 ```
+#### Pylint
  ![pylint](./pylint.PNG)
