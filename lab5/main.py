@@ -43,8 +43,8 @@ def check_if_someone_win_a_game(brd_crds, symbol):
 
 
 def check_rows(cord, brd_crds, symbol_null, symbol_player):
-    """ Funkcja zwracająca współrzędną jeśli można zablokowac
-    przeciwnika w wierszu lub -1 w przeciwnym wypadku"""
+    """ Funkcja zwracająca współrzędną jeśli można zablokowac gracza
+    lub wygrac z nim stawiajac znak w wierszu lub -1 w przeciwnym wypadku"""
     if brd_crds[cord] == brd_crds[cord + 1] == symbol_player and \
             brd_crds[cord + 2] == symbol_null:
         return cord + 2
@@ -58,8 +58,8 @@ def check_rows(cord, brd_crds, symbol_null, symbol_player):
 
 
 def check_columns(cord, brd_crds, symbol_null, symbol_player):
-    """ Funkcja zwracająca współrzędną jeśli można zablokowac
-    przeciwnika w kolumnie lub -1 w przeciwnym wypadku"""
+    """ Funkcja zwracająca współrzędną jeśli można zablokowac gracza
+    lub wygrac z nim stawiajac znak w kolumnie lub -1 w przeciwnym wypadku"""
     if brd_crds[cord] == brd_crds[cord + 3] == symbol_player and \
             brd_crds[cord + 6] == symbol_null:
         return cord + 6
@@ -73,8 +73,8 @@ def check_columns(cord, brd_crds, symbol_null, symbol_player):
 
 
 def check_diagonal_one(brd_crds, symbol_null, symbol_player):
-    """ Funkcja zwracająca współrzędną jeśli można zablokowac
-        przeciwnika po przekątnej (w górę) lub -1 w przeciwnym wypadku"""
+    """ Funkcja zwracająca współrzędną jeśli można zablokowac gracza lub wygrac
+    z nim stawiajac znak po przekątnej (w górę) lub -1 w przeciwnym wypadku"""
     if brd_crds[0] == brd_crds[4] == symbol_player and brd_crds[8] == symbol_null:
         return 8
     if brd_crds[0] == brd_crds[8] == symbol_player and brd_crds[4] == symbol_null:
@@ -85,8 +85,8 @@ def check_diagonal_one(brd_crds, symbol_null, symbol_player):
 
 
 def check_diagonal_two(brd_crds, symbol_null, symbol_player):
-    """ Funkcja zwracająca współrzędną jeśli można zablokować
-        przeciwnika po przekątnej (w dół) lub -1 w przeciwnym wypadku"""
+    """ Funkcja zwracająca współrzędną jeśli można zablokować gracza lub wygrac
+    z nim stawiajac znak po przekątnej (w dół) lub -1 w przeciwnym wypadku"""
     if brd_crds[6] == brd_crds[4] == symbol_player and brd_crds[2] == symbol_null:
         return 2
     if brd_crds[6] == brd_crds[2] == symbol_player and brd_crds[4] == symbol_null:
