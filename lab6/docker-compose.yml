@@ -1,0 +1,17 @@
+version: "3.7"
+services:
+    app:
+        build: ./
+        ports:
+        - "${THE_PORT:-5000}:5000"
+        volumes:
+        - "./:/code"
+
+
+    database:
+        image: "mongo"
+        volumes:
+        - "mongo_volume:/data/db"
+
+volumes:
+    mongo_volume:
